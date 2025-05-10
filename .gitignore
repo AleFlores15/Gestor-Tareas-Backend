@@ -1,0 +1,50 @@
+# Node modules
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+
+# Sequelize config if generated
+config/config.json
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by testing tools
+coverage/
+
+# Optional npm cache directory
+.npm
+
+# Docker
+*.env.local
+docker-compose.override.yml
+docker-compose.dev.yml
+docker-compose.prod.yml
+Dockerfile*
+
+# VSCode and IDEs
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs from Sequelize CLI
+*.sqlite
+
+# TypeScript build (if you use TS)
+dist/
