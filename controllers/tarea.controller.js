@@ -86,6 +86,78 @@ exports.obtenerTareas = async (req, res) => {
   try {
     const rawPage = parseInt(req.query.page);
     const rawLimit = parseInt(req.query.limit);
+    const { estado, fechaInicio, fechaFin, search } = req.query;
+
+    // Validación de paginación
+    if (rawPage < 1 || isNaN(rawPage)) {
+      return res.status(400).json({
+        message: "El número de página debe ser mayor o igual a 1.",
+      });
+    }
+
+    if (rawLimit < 1 || isNaN(rawLimit)) {
+      return res.status(400).json({
+        message: "El límite debe ser mayor o igual a 1.",
+      });
+    }
+
+    const page = rawPage;
+    const limit = rawLimit;
+    const offset = (page - 1) * limit;
+
+    const where = {
+      usuarioId: req.usuario.id,
+    };
+
+    if (estado) {
+      where.estado = estado;
+    }
+
+    if (fechaInicio && fechaFin) {
+      where.fechaLimite = {
+        [Op.between]: [new Date(fechaInicio), new Date(fechaFin)],
+      };
+    }
+
+    if (search) {
+      where[Op.and] = where[Op.and] || [];
+      where[Op.and].push({
+        [Op.or]: [
+          { titulo: { [Op.iLike]: `%${search}%` } },
+          { descripcion: { [Op.iLike]: `%${search}%` } },
+        ],
+      });
+    }
+
+    const tareas = await Tarea.findAndCountAll({
+      where,
+      limit,
+      offset,
+      order: [["createdAt", "DESC"]],
+    });
+
+    return res.status(200).json({
+      message: "Tareas encontradas",
+      tareas: tareas.rows,
+      total: tareas.count,
+      page,
+      limit,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Error al obtener las tareas",
+    });
+  }
+};
+
+
+
+/*
+exports.obtenerTareas = async (req, res) => {
+  try {
+    const rawPage = parseInt(req.query.page);
+    const rawLimit = parseInt(req.query.limit);
 
     // Validación estricta de paginación
     if (rawPage < 1 || isNaN(rawPage)) {
@@ -142,3 +214,4 @@ exports.obtenerTareas = async (req, res) => {
   }
 };
 
+*/
