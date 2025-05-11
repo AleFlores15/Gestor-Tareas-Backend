@@ -4,6 +4,8 @@ const {
   crearTarea,
 
 } = require("../controllers/tarea.controller");
+const { validarTarea } = require('../middlewares/tareaValidator');
+const authToken = require("../middlewares/auth");
 
-router.post("/", crearTarea); 
+router.post("", authToken, validarTarea, crearTarea);
 module.exports = router;
