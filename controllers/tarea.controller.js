@@ -1,5 +1,6 @@
 const { validationResult } = require("express-validator");
 const { Tarea } = require("../models");
+const { Op } = require("sequelize");
 
 // Crear una nueva tarea para el usuario autenticado con el jwt
 exports.crearTarea = async (req, res) => {
@@ -78,3 +79,66 @@ exports.obtenerTareaPorId = async (req, res) => {
     });
   }
 };
+
+// obtener todas las tareas del usuario autenticado, tomar en cuenta paginacion y filtros por estado y entre 2 fechas
+
+exports.obtenerTareas = async (req, res) => {
+  try {
+    const rawPage = parseInt(req.query.page);
+    const rawLimit = parseInt(req.query.limit);
+
+    // Validación estricta de paginación
+    if (rawPage < 1 || isNaN(rawPage)) {
+      return res.status(400).json({
+        message: "El número de página debe ser mayor o igual a 1.",
+      });
+    }
+
+    if (rawLimit < 1 || isNaN(rawLimit)) {
+      return res.status(400).json({
+        message: "El límite debe ser mayor o igual a 1.",
+      });
+    }
+
+    const page = rawPage;
+    const limit = rawLimit;
+    const offset = (page - 1) * limit;
+
+    const { estado, fechaInicio, fechaFin } = req.query;
+
+    const where = {
+      usuarioId: req.usuario.id,
+    };
+
+    if (estado) {
+      where.estado = estado;
+    }
+
+    if (fechaInicio && fechaFin) {
+      where.fechaLimite = {
+        [Op.between]: [new Date(fechaInicio), new Date(fechaFin)],
+      };
+    }
+
+    const tareas = await Tarea.findAndCountAll({
+      where,
+      limit,
+      offset,
+      order: [["createdAt", "DESC"]],
+    });
+
+    return res.status(200).json({
+      message: "Tareas encontradas",
+      tareas: tareas.rows,
+      total: tareas.count,
+      page,
+      limit,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Error al obtener las tareas",
+    });
+  }
+};
+
