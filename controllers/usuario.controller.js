@@ -1,10 +1,13 @@
-const {usuario} = require("../models");
+const { Usuario } = require("../models");
 
 // Crear un nuevo usuario
 exports.crearUsuario = async (req, res) => {
   try {
-    //const { nombre, email, password } = req.body;
-    const newUsuario = await usuario.create(req.body);//{ nombre, email, password });
+    console.log("Creando usuario...");
+    console.log(req.body);
+    const { nombre, email, password } = req.body;
+    const newUsuario = await Usuario.create(req.body);
+    console.log("Usuario creado:", newUsuario);
     res.status(201).json(newUsuario);
   } catch (error) {
     res.status(500).json({ message: "Error al crear el usuario", error });
