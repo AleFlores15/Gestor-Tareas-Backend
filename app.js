@@ -1,20 +1,13 @@
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const express = require('express'); 
+const app = express(); 
+const usuarioRoutes = require('./routes/usuario.routes'); 
+const tareaRoutes = require('./routes/tarea.routes'); 
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+app.use(express.json()); 
+app.use('/api/auth', usuarioRoutes); 
+app.use('/api/tasks', tareaRoutes); 
 
-var app = express();
-
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
-
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Servidor corriendo en http://localhost:${PORT}`));
 
 module.exports = app;
