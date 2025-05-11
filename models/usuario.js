@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-    },
+    }/*,
     {
       timestamps: true,
       hooks: {
@@ -36,7 +36,7 @@ module.exports = (sequelize, DataTypes) => {
           }
         },
       },
-    }
+    }*/
   );
 
   Usuario.associate = function (models) {

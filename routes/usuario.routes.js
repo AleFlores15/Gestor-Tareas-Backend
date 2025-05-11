@@ -4,6 +4,8 @@ const {
   crearUsuario,
  
 } = require("../controllers/usuario.controller");
-router.post("/register", crearUsuario);
+const { validarUsuario } = require('../middlewares/usuarioValidator');
+
+router.post("/register", validarUsuario, crearUsuario);
 
 module.exports = router;
