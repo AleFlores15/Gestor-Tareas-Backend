@@ -10,6 +10,13 @@ exports.crearUsuario = async (req, res) => {
     return res.status(400).json({ errores: errors.array() });
   }
   try {
+    const usuarioExistente = await Usuario.findOne({
+      where: { email: req.body.email },
+    });
+    if (usuarioExistente) {
+      return res.status(400).json({ message: "El usuario ya existe" });
+    }
+    
     const salt = await bcrypt.genSalt(10);
     req.body.password = await bcrypt.hash(req.body.password, salt);
 
@@ -23,7 +30,6 @@ exports.crearUsuario = async (req, res) => {
         email: newUsuario.email,
       },
     });
-    
   } catch (error) {
     res.status(500).json({ message: "Error al crear el usuario", error });
   }
@@ -31,8 +37,11 @@ exports.crearUsuario = async (req, res) => {
 
 // Login de usuario
 exports.loginUsuario = async (req, res) => {
-  console.log("Login usuario");
-  console.log("Body: ", req.body);
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errores: errors.array() });
+  }
+
   const { email, password } = req.body;
   try {
     console.log("Email: ", email);
@@ -55,15 +64,14 @@ exports.loginUsuario = async (req, res) => {
       }
     );
 
-    res.json({ 
+    res.json({
       message: "Login exitoso",
-      token: token
+      token: token,
     });
   } catch (error) {
     res.status(500).json({ message: "Error al iniciar sesión", error });
   }
 };
-
 
 //obtener usuario por el token
 exports.obtenerUsuario = async (req, res) => {
@@ -76,7 +84,7 @@ exports.obtenerUsuario = async (req, res) => {
       id: usuario.id,
       nombre: usuario.nombre,
       email: usuario.email,
-    });	
+    });
   } catch (error) {
     res.status(500).json({ message: "Error al obtener el usuario", error });
   }
