@@ -81,29 +81,9 @@ exports.obtenerTareaPorId = async (req, res) => {
 };
 
 // obtener todas las tareas del usuario autenticado con filtros y paginación
-
 exports.obtenerTareas = async (req, res) => {
   try {
-    const rawPage = parseInt(req.query.page);
-    const rawLimit = parseInt(req.query.limit);
     const { estado, fechaInicio, fechaFin, search } = req.query;
-
-    // Validación de paginación
-    if (rawPage < 1 || isNaN(rawPage)) {
-      return res.status(400).json({
-        message: "El número de página debe ser mayor o igual a 1.",
-      });
-    }
-
-    if (rawLimit < 1 || isNaN(rawLimit)) {
-      return res.status(400).json({
-        message: "El límite debe ser mayor o igual a 1.",
-      });
-    }
-
-    const page = rawPage;
-    const limit = rawLimit;
-    const offset = (page - 1) * limit;
 
     const where = {
       usuarioId: req.usuario.id,
@@ -129,19 +109,14 @@ exports.obtenerTareas = async (req, res) => {
       });
     }
 
-    const tareas = await Tarea.findAndCountAll({
+    const tareas = await Tarea.findAll({
       where,
-      limit,
-      offset,
       order: [["createdAt", "DESC"]],
     });
 
     return res.status(200).json({
       message: "Tareas encontradas",
-      tareas: tareas.rows,
-      total: tareas.count,
-      page,
-      limit,
+      tareas,
     });
   } catch (error) {
     console.error(error);
@@ -150,6 +125,7 @@ exports.obtenerTareas = async (req, res) => {
     });
   }
 };
+
 
 // eliminar una tarea por id, pero solo si el estado es "Completada"
 exports.eliminarTarea = async (req, res) => {
