@@ -147,7 +147,7 @@ exports.eliminarTarea = async (req, res) => {
       });
     }
 
-    if (tarea.estado !== "Completada") {
+    if (tarea.estado !== "completada") {
       return res.status(400).json({
         message: "Solo se pueden eliminar tareas completadas",
       });
@@ -171,10 +171,7 @@ exports.actualizarTarea = async (req, res) => {
   console.log("Nuevo estado recibido:", req.body.estado);
 
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
+    
     const { id } = req.params;
     const { titulo, descripcion, estado, fechaLimite } = req.body;
 
