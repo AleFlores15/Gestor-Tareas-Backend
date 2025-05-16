@@ -10,7 +10,7 @@ exports.validarTarea = [
   body("descripcion")
     .notEmpty()
     .withMessage("La descripción es obligatoria")
-    .isLength({ min: 10 })
+    .isLength({ min: 3 })
     .withMessage("La descripción debe tener al menos 10 caracteres"),
 
   body("fechaLimite")
