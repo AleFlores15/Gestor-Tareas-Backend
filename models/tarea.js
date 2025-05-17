@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: "pendiente",
       },
       fechaLimite: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: true,
       },
       usuarioId: {

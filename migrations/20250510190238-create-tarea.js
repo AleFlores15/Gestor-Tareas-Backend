@@ -19,7 +19,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       fechaLimite: {
-        type: Sequelize.DATE
+        type: Sequelize.DATEONLY
       },
       usuarioId: {
         type: Sequelize.INTEGER
